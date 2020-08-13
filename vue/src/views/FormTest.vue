@@ -31,8 +31,8 @@ export default {
 				password: '',
 			},
 			rules: {
-				userName: { required: true, message: 'please input name', trigger: 'blur' },
-				password: { required: true, message: 'please input password', trigger: 'blur' },
+				userName: { required: true, message: 'please input name' },
+				password: { required: true, message: 'please input password' },
 			},
 		}
 	},

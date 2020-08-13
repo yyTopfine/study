@@ -27,10 +27,10 @@ export default {
 	},
 	methods: {
 		validator() {
-			const validator = new schema(this.rule[this.prop])
+			const validater = new schema(this.rule[this.prop])
 			const _this = this
-			return validator.validate(this.ruleForm, (error, fields) => {
-				if (error) {
+			return validater.validate(this.ruleForm[this.prop], (errors, fields) => {
+				if (errors) {
 					_this.errorMsg = fields
 				}
 			})
