@@ -15,7 +15,7 @@ export default {
 	methods: {
 		inputEvent(e) {
 			this.val = e.target.value
-			this.$emit('inputChange', this.val)
+			this.$parent.$emit('inputChange', this.val)
 		},
 	},
 }

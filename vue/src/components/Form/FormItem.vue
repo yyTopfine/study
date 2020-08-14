@@ -26,7 +26,7 @@ export default {
 		},
 	},
 	mounted() {
-		this.$on('inputChange', val => {
+		this.$on('inputChange', function(val) {
 			console.log('va:', val)
 			this.ruleForm[this.prop] = val
 		})
