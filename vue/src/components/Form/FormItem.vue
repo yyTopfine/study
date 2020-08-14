@@ -25,6 +25,12 @@ export default {
 			type: String,
 		},
 	},
+	mounted() {
+		this.$on('inputChange', val => {
+			console.log('va:', val)
+			this.ruleForm[this.prop] = val
+		})
+	},
 	methods: {
 		validator() {
 			const validater = new schema(this.rule[this.prop])
