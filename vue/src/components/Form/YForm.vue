@@ -26,20 +26,9 @@ export default {
 	},
 	methods: {
 		validator() {
-			const childs = this.$children.filter(item => item.prop)
-			const validators = []
+			const validators = this.$children.filter(item => item.prop).map(item => item.validator())
 
-			for (let i = 0; i < childs.length; i++) {
-				validators.push(childs[i].validator())
-			}
-
-			Promise.all(validators)
-				.then(() => {
-					return true
-				})
-				.catch(() => {
-					return false
-				})
+			return Promise.all(validators)
 		},
 	},
 }

@@ -12,6 +12,7 @@
 import schema from 'async-validator'
 export default {
 	inject: ['ruleForm', 'rule'],
+	componentName: 'yFormItem',
 	data() {
 		return {
 			errorMsg: '',
@@ -26,18 +27,19 @@ export default {
 		},
 	},
 	mounted() {
-		this.$on('inputChange', function(val) {
-			console.log('va:', val)
-			this.ruleForm[this.prop] = val
+		this.$on('validator', () => {
+			this.validator()
 		})
 	},
 	methods: {
 		validator() {
-			const validater = new schema(this.rule[this.prop])
+			const validater = new schema({ [this.prop]: this.rule[this.prop] })
 			const _this = this
-			return validater.validate(this.ruleForm[this.prop], (errors, fields) => {
+			return validater.validate({ [this.prop]: this.ruleForm[this.prop] }, (errors, fields) => {
 				if (errors) {
-					_this.errorMsg = fields
+					_this.errorMsg = fields[this.prop][0].message
+				} else {
+					_this.errorMsg = ''
 				}
 			})
 		},

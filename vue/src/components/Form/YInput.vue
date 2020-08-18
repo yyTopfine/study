@@ -6,7 +6,10 @@
 </template>
 
 <script>
+import event from '../../utils/event'
 export default {
+	inheritAttrs: false,
+	mixins: [event],
 	data() {
 		return {
 			val: '',
@@ -15,7 +18,9 @@ export default {
 	methods: {
 		inputEvent(e) {
 			this.val = e.target.value
-			this.$parent.$emit('inputChange', this.val)
+			this.$emit('input', this.val)
+			this.dispatch('yFormItem', 'validator')
+			// this.$parent.$emit('validator')
 		},
 	},
 }
