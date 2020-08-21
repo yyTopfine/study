@@ -11,7 +11,7 @@
 <script>
 import schema from 'async-validator'
 export default {
-	inject: ['ruleForm', 'rule'],
+	inject: ['ruleForm', 'rule', 'formItem'],
 	componentName: 'yFormItem',
 	data() {
 		return {
@@ -30,6 +30,7 @@ export default {
 		this.$on('validator', () => {
 			this.validator()
 		})
+		this.formItem.push(this)
 	},
 	methods: {
 		validator() {
