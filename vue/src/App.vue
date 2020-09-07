@@ -4,6 +4,7 @@
 			<ul>
 				<li><router-link to="/" class="link">通信测试</router-link></li>
 				<li><router-link to="/form" class="link">表单测试</router-link></li>
+				<li><router-link to="/vuex" class="link">Vuex测试</router-link></li>
 			</ul>
 		</div>
 		<div class="content">

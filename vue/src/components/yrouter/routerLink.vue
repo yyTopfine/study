@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<a :href="pathUrl"><slot></slot></a>
+		<a :href="'#' + to"><slot></slot></a>
 	</div>
 </template>
 
@@ -11,11 +11,6 @@ export default {
 		to: {
 			type: String,
 			required: true,
-		},
-	},
-	computed: {
-		pathUrl() {
-			return this.to === '/' ? '#/' : '#' + this.to
 		},
 	},
 }

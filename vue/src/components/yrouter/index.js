@@ -1,44 +1,43 @@
-import Vue from 'vue'
 import routerLink from './routerLink.vue'
-import routerView from './routerView.vue'
 
+export let Vue
 class YRouter {
 	constructor(options) {
-		this.options = options
-		this.routerMap = new Map()
+		this.$options = options
+
+		this.routeMap = {}
+		this.$options.routes.forEach(route => {
+			this.routeMap[route.path] = route
+		})
+		Vue.util.defineReactive(this, 'current', '/')
+		window.addEventListener('hashchange', this.hashChange.bind(this))
+		window.addEventListener('load', this.hashChange.bind(this))
 	}
 
-	init() {
-		for (let i = 0; i < this.options.routes.length; i++) {
-			let item = this.options.routes[i]
-			this.routerMap.set(item.path, item.component)
-		}
-
-		const _this = this
-		window.addEventListener('hashchange', function() {
-			let hashVal = location.hash.slice(1)
-			let component = _this.routerMap.get(hashVal)
-			console.log(component)
-		})
+	hashChange() {
+		this.current = location.hash.slice(1)
 	}
 }
 
-YRouter.install = function() {
-	// console.log(location)
-	let router = {}
+YRouter.install = function(_Vue) {
+	Vue = _Vue
 
 	Vue.mixin({
 		beforeCreate() {
 			if (this.$options.router) {
-				// console.log(this)
-				this.$options.router.init()
+				Vue.prototype.$router = this.$options.router
 			}
 		},
 	})
 
-	Vue.util.defineReactive(router, 'hash', '/')
-
 	Vue.component('router-link', routerLink)
-	Vue.component('router-view', routerView)
+	Vue.component('router-view', {
+		render(h) {
+			const { routeMap, current } = this.$router
+			const component = routeMap[current] ? routeMap[current].component : null
+			return h(component)
+		},
+	})
 }
+
 export default YRouter

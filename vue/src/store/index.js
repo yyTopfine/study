@@ -1,11 +1,23 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import Vue from 'vue'
+import Vuex from '../components/ystore/index.js'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state: {},
-  mutations: {},
-  actions: {},
-  modules: {}
-});
+	state: {
+		count: 0,
+	},
+	mutations: {
+		setCount(state, val) {
+			state.count = val
+		},
+	},
+	actions: {
+		restCount({ commit }, val) {
+			setTimeout(() => {
+				commit('setCount', val)
+			}, 3000)
+		},
+	},
+	modules: {},
+})
