@@ -24,6 +24,12 @@ const routes = [
 		path: '/vuex',
 		name: 'VuexPage',
 		component: VuexPage,
+		children: [
+			{
+				path: 'childrenTest',
+				component: FormTest,
+			},
+		],
 	},
 ]
 

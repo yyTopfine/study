@@ -1,9 +1,19 @@
-import { Vue } from './index'
 export default {
-	name: 'RouterView',
 	render(h) {
-		console.log(_Vue.$router)
-		console.log(this.current)
-		return h('div', {}, [this.$router[this.current].component])
+		this.$vnode.data.routerView = true
+
+		let depth = 0
+		let parent = this.$parent
+
+		while (parent) {
+			const vnode = parent.$vnode && parent.$vnode.data
+			if (vnode && vnode.routerView) {
+				depth++
+			}
+			parent = parent.$parent
+		}
+
+		const component = this.$router.matched[depth] || null
+		return h(component)
 	},
 }

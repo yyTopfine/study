@@ -1,33 +1,51 @@
+let Vue
 class Store {
 	constructor(options) {
-		this.state = options.state
+		this._vm = new Vue({
+			data: options.state,
+		})
 		this.mutations = options.mutations
 		this.actions = options.actions
+		this.options = options
+		this.getters = {}
 
-		this.mutationMap = {}
-		const keyAry = Object.keys(this.mutations)
-		keyAry.forEach(key => {
-			this.mutationMap[key] = this.mutations[key]
-		})
+		this.gettersInit()
 
-		this.actionsMap = {}
-		Object.keys(this.actions).forEach(key => {
-			if (key) {
-				this.actionsMap[key] = this.actions[key]
-			}
-		})
+		this.commit = this.commit.bind(this)
+		this.dispatch = this.dispatch.bind(this)
 	}
 
 	commit(methodName, val) {
-		this.mutationMap[methodName](this.state, val)
+		this.mutations[methodName](this.state, val)
 	}
 
 	dispatch(methodName, val) {
-		this.actionsMap[methodName](this, val)
+		return this.actions[methodName](this, val)
+	}
+
+	gettersInit() {
+		const keyAry = Object.keys(this.options.getters)
+
+		keyAry.forEach(key => {
+			Object.defineProperty(this.getters, key, {
+				get: () => {
+					return this.options.getters[key](this.state)
+				},
+			})
+		})
+	}
+
+	get state() {
+		return this._vm._data
+	}
+
+	set state(val) {
+		new Error('can not set ,please use commit or dispatch change state')
 	}
 }
 
-function install(Vue) {
+function install(_Vue) {
+	Vue = _Vue
 	Vue.mixin({
 		beforeCreate() {
 			if (this.$options.store) {

@@ -1,24 +1,22 @@
 <template>
 	<div>
-		<div>count:{{ count }}</div>
+		<div>count:{{ $store.state.count }}</div>
+		<div>double count:{{ $store.getters.doubleCount }}</div>
+		<br />
 		<button @click="clickBtn">加1</button>
-		<button @click="clickBtn1">3秒后变为0</button>
+		<br />
+		<button @click="clickBtn1" style="margin-top:20px">3秒后变为0</button>
+		<br />
+		<div>嵌套路由</div>
+		<router-view></router-view>
 	</div>
 </template>
 
 <script>
 export default {
-	data() {
-		return {
-			count: 0,
-		}
-	},
-	mounted() {
-		this.count = this.$store.state.count
-	},
 	methods: {
 		clickBtn() {
-			this.$store.commit('setCount', this.count++)
+			this.$store.commit('setCount', ++this.$store.state.count)
 		},
 		clickBtn1() {
 			this.$store.dispatch('restCount', 0)
