@@ -21,7 +21,8 @@ class YRouter {
 	}
 
 	hashChange() {
-		this.current = location.hash.slice(1)
+		this.matched = []
+		this.current = location.hash.slice(1) || '/'
 		this.match()
 	}
 
@@ -32,10 +33,11 @@ class YRouter {
 				this.matched.push(route.component)
 			}
 
-			if (this.current !== '/' && this.current.indexOf(route.path)) {
+			if (route.path !== '/' && this.current.indexOf(route.path) > -1) {
 				this.matched.push(route.component)
-				console.log('qq', route.children)
-				this.match(route.children)
+				if (route.children) {
+					this.match(route.children)
+				}
 			}
 		}
 	}

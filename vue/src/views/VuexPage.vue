@@ -7,7 +7,8 @@
 		<br />
 		<button @click="clickBtn1" style="margin-top:20px">3秒后变为0</button>
 		<br />
-		<div>嵌套路由</div>
+		<br />
+		<div>--------------------------------------嵌套路由---------------------------------------</div>
 		<router-view></router-view>
 	</div>
 </template>
