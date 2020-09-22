@@ -1,76 +1,41 @@
-/**
- * 对象转为响应式对象
- *
- * @param {*} obj
- */
-function observeInit(obj) {
-	for (key in obj) {
-		defineReactive(obj, key, obj[key])
-	}
-}
-
-/**
- * 响应式对象拦截
- *
- * @param {*} obj
- * @param {*} key
- * @param {*} val
- * @returns
- */
-function defineReactive(obj, key, val) {
-	if (typeof obj !== 'object' || obj === null) {
-		return
-	}
-
-	observeInit(val)
-
-	Object.defineProperty(obj, key, {
-		get() {
-			console.log(key + ':get is runed')
-			return val
-		},
-		set(newVal) {
-			console.log(key + ':set is runed')
-			val = newVal
-			update()
-		},
-	})
-}
-
-function update() {}
-
-/**
- * 响应式对象添加属性
- *
- * @param {*} obj
- * @param {*} key
- * @param {*} val
- */
-function set(obj, key, val) {
-	defineReactive(obj, key, val)
-}
+import Observe from './uilts/defineperporty.js'
+import Compile from './uilts/compile.js'
 
 /**
  * 自定义Vue实现类
  *
  * @class Yvue
  */
-class Yvue {
+export class Yvue {
 	constructor(options) {
 		this.$options = options
+
+		// 判断data是否为函数
 		if (typeof options.data === 'function') {
 			this.$data = options.data()
 		} else {
 			this.$data = options.data
 		}
 
-		new Observe(this.$data)
+		// 初始化$date中属性对应的依赖集合
+		this.depMap = new Map()
+
+		// $data响应式转化
+		this.observe = new Observe(this.$data, this)
+
+		// 将$data中的属性代理到yvue实例上，从而使其能通过实例直接访问
 		this.proxy()
+
+		// 页面初始化编译
 		new Compile(this, this.$options.el)
 	}
 
+	/**
+	 * 代理$data属性至yvue实例
+	 *
+	 * @memberof Yvue
+	 */
 	proxy() {
-		console.log(this.$data)
 		Object.keys(this.$data).forEach(key => {
 			Object.defineProperty(this, key, {
 				get() {
@@ -82,44 +47,15 @@ class Yvue {
 			})
 		})
 	}
-}
 
-/**
- * 对象转为响应式对象实现类
- *
- * @class Observe
- */
-class Observe {
-	constructor(obj) {
-		observeInit(obj)
-	}
-}
-
-class Compile {
-	constructor(vm, el) {
-		this.$vm = vm
-		this.$el = el
-
-		this.compile(document.querySelector(this.$el))
-	}
-
-	compile(root) {
-		const nodes = root.childNodes
-
-		Array.from(nodes).forEach(node => {
-			this.compile(node)
-
-			if (node.nodeType === 1) {
-				this.compileElement()
-			} else if (node.nodeType === 3 && /\{\{(.*)\}\}/.test(node.textContent)) {
-				this.compileText()
-			}
-		})
-	}
-
-	compileElement() {}
-
-	compileText() {
-		console.log(RegExp.$1)
+	/**
+	 * 响应式对象添加属性
+	 *
+	 * @param {*} obj
+	 * @param {*} key
+	 * @param {*} val
+	 */
+	set(obj, key, val) {
+		this.observe.defineReactive(obj, key, val)
 	}
 }

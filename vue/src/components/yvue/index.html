@@ -8,20 +8,29 @@
 	<body>
 		<div id="app">
 			<p>{{count}}</p>
-			<p k-text="count"></p>
+			<p v-text="count"></p>
+			<p v-html="htmlVal"></p>
 		</div>
 	</body>
-	<script src="./index.js"></script>
-	<script>
+	<!-- <script src="./index.js"></script> -->
+	<script type="module">
+		import { Yvue } from './index.js'
 		const app = new Yvue({
 			el: '#app',
 			data() {
 				return {
 					count: 0,
+					htmlVal: '<span style="color:red;font-size:16">v-html测试</span>',
 				}
 			},
 		})
 
 		app.count++
+		app.htmlVal = '<span style="color:red;font-size:16">v-html测试,count:' + app.count + '</span>'
+
+		// setInterval(function() {
+		// 	app.count++
+		// 	app.htmlVal = '<span style="color:red;font-size:16">v-html测试,count:' + app.count + '</span>'
+		// }, 1000)
 	</script>
 </html>
