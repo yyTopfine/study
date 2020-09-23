@@ -17,6 +17,8 @@ export class Yvue {
 			this.$data = options.data
 		}
 
+		this.methods = options.methods
+
 		// 初始化$date中属性对应的依赖集合
 		this.depMap = new Map()
 

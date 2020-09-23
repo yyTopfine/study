@@ -10,9 +10,20 @@
 			<p>{{count}}</p>
 			<p v-text="count"></p>
 			<p v-html="htmlVal"></p>
+			<input v-model="bindVal" />
+			<br />
+			<div>
+				bindVal:
+				<span>{{bindVal}}</span>
+			</div>
+			<br />
+			<button @click="btnClick(2,3)">count++</button>
+			<br />
+			<br />
+			<button @click="bindValClick()">bindVal++</button>
 		</div>
 	</body>
-	<!-- <script src="./index.js"></script> -->
+
 	<script type="module">
 		import { Yvue } from './index.js'
 		const app = new Yvue({
@@ -21,16 +32,17 @@
 				return {
 					count: 0,
 					htmlVal: '<span style="color:red;font-size:16">v-html测试</span>',
+					bindVal: 2,
 				}
 			},
+			methods: {
+				btnClick(num, num1) {
+					app.count = app.count + num + num1 + this.bindVal
+				},
+				bindValClick() {
+					app.bindVal++
+				},
+			},
 		})
-
-		app.count++
-		app.htmlVal = '<span style="color:red;font-size:16">v-html测试,count:' + app.count + '</span>'
-
-		// setInterval(function() {
-		// 	app.count++
-		// 	app.htmlVal = '<span style="color:red;font-size:16">v-html测试,count:' + app.count + '</span>'
-		// }, 1000)
 	</script>
 </html>

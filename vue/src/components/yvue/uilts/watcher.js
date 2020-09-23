@@ -1,3 +1,4 @@
+import Dependent from './dependent.js'
 /**
  * 观察者类
  *
@@ -5,11 +6,17 @@
  * @class Watcher
  */
 export default class Watcher {
-	constructor(node, vm, attrValue, fn) {
-		this.node = node
+	constructor(vm, attrValue, fn) {
 		this.vm = vm
 		this.attrValue = attrValue
 		this.fn = fn
+
+		// 将waatcher(观察者)实例作为Dep(依赖)的静态属性
+		Dependent.target = this
+		// data数据对象的读取，用于触发一次watcher收集
+		vm[attrValue]
+		// 重置静态属性
+		Dependent.target = null
 	}
 
 	/**
@@ -18,6 +25,6 @@ export default class Watcher {
 	 * @memberof Watcher
 	 */
 	update() {
-		this.fn(this.node, this.vm, this.attrValue)
+		this.fn.call(this.vm)
 	}
 }

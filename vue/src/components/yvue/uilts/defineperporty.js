@@ -8,6 +8,7 @@ import Dependent from './dependent.js'
 export default class Observe {
 	constructor(obj, vm) {
 		this.observeInit(obj, vm)
+		this.dep = new Dependent()
 	}
 
 	/**
@@ -43,16 +44,14 @@ export default class Observe {
 
 		Object.defineProperty(obj, key, {
 			get() {
+				Dependent.target && vm.depMap.get(key).addWatcher(Dependent.target)
 				return val
 			},
 			set(newVal) {
 				if (newVal !== val) {
 					val = newVal
-
 					// 数据有更新时，遍历依赖数组，并执行数组中watcher的update函数更新对应视图
-					vm.depMap.get(key).depAry.forEach(wat => {
-						wat && wat.update()
-					})
+					vm.depMap.get(key).notify()
 				}
 			},
 		})

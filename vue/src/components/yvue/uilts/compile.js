@@ -32,10 +32,11 @@ export default class Compile {
 
 			if (node.nodeType === 1) {
 				// 节点为元素节点操作
-				this.compileElement(node, this.$vm)
+				this.compileElement(node)
 			} else if (node.nodeType === 3 && /\{\{(.*)\}\}/.test(node.textContent)) {
 				// 节点为文本操作
-				this.compileText(node, this.$vm)
+				const reg = node.textContent.match(/\{\{(?<textVal>.*)\}\}/)
+				this.compileText(node, reg)
 			}
 		})
 	}
@@ -47,40 +48,59 @@ export default class Compile {
 	 * @param {*} vm
 	 * @memberof Compile
 	 */
-	compileElement(node, vm) {
+	compileElement(node) {
 		const attributes = node.attributes
 		// 节点属性遍历
 		Array.from(attributes).forEach(attr => {
 			const attrName = attr.name
 			const attrValue = attr.value
 
-			// 根据属性名，解析出该属性对应的解析方法
-			const key = attrName.substr(2)
+			if (attrName.indexOf('v-') === 0) {
+				// 根据属性名，解析出该属性对应的解析方法
+				const compileMed = attrName.substr(2)
 
-			if (this[key]) {
-				this.watcherFn = new Watcher(node, this.$vm, attrValue, this[key])
-				vm.depMap.get(attrValue).addWatcher(this.watcherFn)
-				this[key](node, this.$vm, attrValue)
+				if (this[compileMed]) {
+					new Watcher(this.$vm, attrValue, () => {
+						this[compileMed](node, this.$vm, attrValue)
+					})
+					this[compileMed](node, this.$vm, attrValue)
+				}
+			} else if (attrName.indexOf('@') === 0) {
+				const eventName = attrName.substr(1)
+				const reg = attrValue.match(/(?<med>.*)\((?<arg>.*)\)/)
+				this.eventBind(node, eventName, this.$vm.methods[reg.groups.med], reg)
 			}
 		})
 	}
 
 	// 解析v-text指令
-	text(node, vm, value) {
-		node.textContent = vm[value]
+	text(node, vm, key) {
+		node.textContent = vm[key]
 	}
 
 	// 解析v-html指令
-	html(node, vm, value) {
-		node.innerHTML = vm[value]
+	html(node, vm, key) {
+		node.innerHTML = vm[key]
 	}
 
 	// 解析文本节点
-	compileText(node, vm) {
-		this.watcherFn = new Watcher(node, vm, vm[RegExp.$1], () => {
-			node.textContent = vm[RegExp.$1]
+	compileText(node, reg) {
+		new Watcher(this.$vm, reg.groups.textVal, () => {
+			node.textContent = this.$vm[reg.groups.textVal]
 		})
-		vm.depMap.get(RegExp.$1).addWatcher(this.watcherFn)
-		node.textContent = vm[RegExp.$1]
+		node.textContent = this.$vm[reg.groups.textVal]
+	}
+
+	eventBind(node, eventName, fn, reg) {
+		node.addEventListener(eventName, () => {
+			fn.apply(this.$vm, reg.groups.arg.split(','))
+		})
+	}
+
+	model(node, vm, key) {
+		node.value = vm[key]
+		node.addEventListener('input', () => {
+			vm[key] = node.value
+		})
 	}
 }
