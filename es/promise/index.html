@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script type='module'>
+    import MyPromise from './mypromise.js'
+    setTimeout(()=>{
+        console.log('宏任务')
+    })
+    const P1 = new Promise((resolve,reject) =>{
+        console.log('微任务')
+        resolve('success')
+        // reject('error')
+    }).then(res =>{
+        console.log("promise-then-res ",res)
+    },error =>{
+        console.log("promise-then-err ",error)
+    })
+
+    console.log("promise",P1)
+
+    const P3 = new Promise((resolve,reject) =>{
+        resolve('success')
+        console.log('promise-resolve2')
+    }).then(res =>{
+        console.log("promise-then1 ",res)
+        return 'res1'
+    }).then(res =>{
+        console.log("promise-then2 ",res)
+    }).catch(error=>{
+        console.log("promise-catch ",error)
+    }).finally(()=>{
+        console.log('promise finally')
+        console.log("----------------------------自定义promise----------------------------")
+    })
+
+    
+    const P2 = new MyPromise((resolve,reject) =>{
+        resolve('success')
+        console.log('mypromise-resolve1')
+        // reject('error')
+    }).then(res =>{
+        console.log("mypromise-then-res ",res)
+    },error =>{
+        console.log("mypromise-then-err ",error)
+    })
+
+    console.log("mypromise",P2)
+
+    const P4 = new MyPromise((resolve,reject) =>{
+        resolve('success')
+        console.log('mypromise-resolve2')
+    }).then(res =>{
+        console.log("mypromise-then1",res)
+        return 'res1'
+    }).then(res =>{
+        console.log("mypromise-then2",res)
+    }).catch(error=>{
+        console.log("mypromise-catch",error)
+    }).finally(()=>{
+        console.log('mypromise finally')
+    })
+</script>
+</html>
